@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculateur du risque d'EER à J30 chez les patients en IRA KDIGO III en réanimation</title>
+    <title>Calculateur de Risque EER</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,32 +12,52 @@
             padding: 20px;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
             padding: 20px;
             background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
-        h1 {
+        h1, h2, h3 {
             text-align: center;
             color: #333;
+        }
+        h1 {
+            margin-bottom: 10px;
+            font-size: 26px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #555;
+        }
+        .authors {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #777;
         }
         form {
             display: flex;
             flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .form-group {
+            width: 45%;
+            margin-bottom: 15px;
         }
         label {
-            width: 100%;
-            margin-top: 10px;
+            display: block;
+            margin-bottom: 5px;
             font-weight: bold;
         }
         input[type="number"] {
-            width: calc(50% - 20px);
-            margin: 10px;
+            width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 14px;
         }
         .button {
             width: 100%;
@@ -58,49 +78,88 @@
         }
         .result {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
             font-size: 18px;
+            color: #333;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #aaa;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Calculateur du risque d'EER à J30 chez les patients en IRA KDIGO III en réanimation</h1>
+        <h1>Calculateur de risque d’évolution vers les critères d’EER</h1>
+        <h2>Chez les patients en IRA KDIGO III</h2>
+        <div class="authors">
+            <p>J. Garraud (jgarraud@chu-clermontferrand.fr) ; Dr. Aniort (janiort@chu-clermontferrand.fr)</p>
+            <p>C. Dupuis ; B. Souweine</p>
+        </div>
+
         <form id="riskCalculator">
-            <!-- Champs de saisie pour les covariables -->
-            <label for="diur_spline">Diurèse des 24h (L/24h):</label>
-            <input type="number" id="diur_spline" step="0.01" required>
-            
-            <label for="b_uree_spline">Urée (mmol/L):</label>
-            <input type="number" id="b_uree_spline" step="0.01" required>
-            
-            <label for="b_k_spline">K (mmol/L):</label>
-            <input type="number" id="b_k_spline" step="0.01" required>
-            
-            <label for="ph_estime_spline">pH:</label>
-            <input type="number" id="ph_estime_spline" step="0.01" required>
-            
-            <label for="b_lact_spline">Lactates (mmol/L):</label>
-            <input type="number" id="b_lact_spline" step="0.01" required>
-            
-            <label for="delta_poids_j">Delta Poids (%):</label>
-            <input type="number" id="delta_poids_j" step="0.01" required>
-            
-            <label for="sofacalc">Score SOFA:</label>
-            <input type="number" id="sofacalc" step="0.01" required>
-            
-            <label for="creat_base">Creatinine de base (µmol/L):</label>
-            <input type="number" id="creat_base" step="0.01" required>
-            
-            <label for="ivmi_1"> VMI (0 pour non ou 1 pour oui):</label>
-            <input type="number" id="ivmi_1" step="1" min="0" max="1" required>
-            
+            <div class="form-group">
+                <label for="diur_spline">Diurèse des 24h :</label>
+                <input type="number" id="diur_spline" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="b_uree_spline">Urée (mmol/L) :</label>
+                <input type="number" id="b_uree_spline" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="b_k_spline">K (mmol/L) :</label>
+                <input type="number" id="b_k_spline" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ph_estime_spline">pH :</label>
+                <input type="number" id="ph_estime_spline" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="b_lact_spline">Lactates (mmol/L) :</label>
+                <input type="number" id="b_lact_spline" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="delta_poids_j">Delta poids (%) :</label>
+                <input type="number" id="delta_poids_j" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="sofacalc">Score SOFA :</label>
+                <input type="number" id="sofacalc" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="creat_base">Créatinine de base (µmol/L) :</label>
+                <input type="number" id="creat_base" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ivmi_1">VMI (0 pour non ou 1 pour oui) :</label>
+                <input type="number" id="ivmi_1" step="1" min="0" max="1" required>
+            </div>
+
             <div class="button">
                 <button type="button" onclick="calculerRisque()">Calculer le Risque</button>
             </div>
         </form>
-        <div class="result" id="result"></div>
+
+        <div class="result" id="result">Le risque d’évolution vers les critères d’EER à J30 est à : xx %</div>
     </div>
+
+    <footer>
+        <p>&copy; 2024 - Calculateur de Risque EER</p>
+    </footer>
 
     <script>
         function calculerRisque() {
@@ -149,7 +208,7 @@
             let risque_pourcentage = (1 - S_t_X) * 100;
             
             // Afficher le résultat
-            document.getElementById('result').innerHTML = `Le pourcentage de risque estimé est: ${risque_pourcentage.toFixed(2)}%`;
+            document.getElementById('result').innerHTML = `Le risque d’évolution vers les critères d’EER à J30 est à : ${risque_pourcentage.toFixed(2)}%`;
         }
     </script>
 </body>
