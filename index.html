@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Risque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        label {
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: calc(50% - 20px);
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .button {
+            width: 100%;
+            text-align: center;
+        }
+        button {
+            padding: 15px 30px;
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculateur de Risque</h1>
+        <form id="riskCalculator">
+            <!-- Champs de saisie pour les covariables -->
+            <label for="diur_spline">Diur Spline:</label>
+            <input type="number" id="diur_spline" step="0.01" required>
+            
+            <label for="b_uree_spline">B Urée Spline:</label>
+            <input type="number" id="b_uree_spline" step="0.01" required>
+            
+            <label for="b_k_spline">B K Spline:</label>
+            <input type="number" id="b_k_spline" step="0.01" required>
+            
+            <label for="ph_estime_spline">PH Estime Spline:</label>
+            <input type="number" id="ph_estime_spline" step="0.01" required>
+            
+            <label for="b_lact_spline">B Lact Spline:</label>
+            <input type="number" id="b_lact_spline" step="0.01" required>
+            
+            <label for="delta_poids_j">Delta Poids J:</label>
+            <input type="number" id="delta_poids_j" step="0.01" required>
+            
+            <label for="sofacalc">Sofacalc:</label>
+            <input type="number" id="sofacalc" step="0.01" required>
+            
+            <label for="creat_base">Creat Base:</label>
+            <input type="number" id="creat_base" step="0.01" required>
+            
+            <label for="ivmi_1">Ivmi 1 (0 ou 1):</label>
+            <input type="number" id="ivmi_1" step="1" min="0" max="1" required>
+            
+            <div class="button">
+                <button type="button" onclick="calculerRisque()">Calculer le Risque</button>
+            </div>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculerRisque() {
+            // Récupérer les valeurs des covariables
+            let diur_spline = parseFloat(document.getElementById('diur_spline').value);
+            let b_uree_spline = parseFloat(document.getElementById('b_uree_spline').value);
+            let b_k_spline = parseFloat(document.getElementById('b_k_spline').value);
+            let ph_estime_spline = parseFloat(document.getElementById('ph_estime_spline').value);
+            let b_lact_spline = parseFloat(document.getElementById('b_lact_spline').value);
+            let delta_poids_j = parseFloat(document.getElementById('delta_poids_j').value);
+            let sofacalc = parseFloat(document.getElementById('sofacalc').value);
+            let creat_base = parseFloat(document.getElementById('creat_base').value);
+            let ivmi_1 = parseInt(document.getElementById('ivmi_1').value);
+            
+            // Coefficients β (logarithmes naturels des SHR)
+            let beta_diur = Math.log(0.8102647);
+            let beta_b_uree = Math.log(1.015794);
+            let beta_b_k = Math.log(1.27371);
+            let beta_ph_estime = Math.log(0.7521502);
+            let beta_b_lact = Math.log(1.015244);
+            let beta_delta_poids = Math.log(1.021564);
+            let beta_sofacalc = Math.log(1.031727);
+            let beta_creat = Math.log(1.004331);
+            let beta_ivmi_1 = Math.log(1.207531);
+
+            // Calcul du score SHR (score prédictif)
+            let shr = Math.exp(
+                beta_diur * diur_spline +
+                beta_b_uree * b_uree_spline +
+                beta_b_k * b_k_spline +
+                beta_ph_estime * ph_estime_spline +
+                beta_b_lact * b_lact_spline +
+                beta_delta_poids * delta_poids_j +
+                beta_sofacalc * sofacalc +
+                beta_creat * creat_base +
+                beta_ivmi_1 * ivmi_1
+            );
+            
+            // Survie de base S0(t) = 40% ou 0.4
+            let S0_t = 0.4;
+            
+            // Calcul de la survie ajustée pour le patient S(t|X)
+            let S_t_X = Math.pow(S0_t, shr);
+            
+            // Calcul de la probabilité de risque (1 - S(t|X))
+            let risque_pourcentage = (1 - S_t_X) * 100;
+            
+            // Afficher le résultat
+            document.getElementById('result').innerHTML = `Le pourcentage de risque estimé est: ${risque_pourcentage.toFixed(2)}%`;
+        }
+    </script>
+</body>
+</html>
